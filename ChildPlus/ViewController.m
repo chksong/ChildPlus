@@ -200,6 +200,11 @@
     _labelOpt1.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:0.2] ;
     _labelOpt2.backgroundColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:0.2] ;
     
+    
+    _labelOpt1.userInteractionEnabled = NO ;
+    _labelOpt2.userInteractionEnabled = NO ;
+    _btnNext.userInteractionEnabled = NO ;
+    
     [self newExercises]  ;
     
     
@@ -207,6 +212,9 @@
         _labelOpt1.hidden  =  NO  ;
         _labelOpt2.hidden  =  NO;
         _labelText.hidden  =  NO  ;
+        
+        
+      
     }] ;
     
    
@@ -214,6 +222,10 @@
 
 
 -(void) tapLableShowAnswer:(UITapGestureRecognizer*)tap {
+    _labelOpt1.userInteractionEnabled = NO ;
+    _labelOpt2.userInteractionEnabled = NO ;
+    _btnNext.userInteractionEnabled = NO ;
+    
     NSLog(@"[tapLableShowAnswer] %@" ,tap)  ;
     UILabel *label = (UILabel*)tap.view  ;
     
