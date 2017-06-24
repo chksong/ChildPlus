@@ -80,4 +80,7 @@
 @property NSInteger myExpectedUtterances;   /*!< Internally used by the class */
 @property NSInteger myDeactivationAttempts; /*!< Internally used by the class */
 
+
+@property (nonatomic ,weak) id<AVSpeechSynthesizerDelegate> playDelegate;
+
 @end

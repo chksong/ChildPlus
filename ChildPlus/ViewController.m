@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "AVSpeechSynthesizerFacade.h"
 
-@interface ViewController ()  {
+@interface ViewController () <AVSpeechSynthesizerDelegate> {
     AVSpeechSynthesizerFacade* mySpeechSynthesizer;
 }
 
@@ -45,6 +45,12 @@
     _mutaArrayResult  = [NSMutableArray new]  ;
     
     [_btnNext setTitle:@"开始" forState:UIControlStateNormal];
+    
+    if (mySpeechSynthesizer == nil)
+    {
+        mySpeechSynthesizer = [[AVSpeechSynthesizerFacade alloc] init];
+        mySpeechSynthesizer.playDelegate = self ;
+    }
 }
 
 
@@ -255,10 +261,7 @@
   //  });
     
     
-    if (mySpeechSynthesizer == nil)
-    {
-        mySpeechSynthesizer = [[AVSpeechSynthesizerFacade alloc] init];
-    }
+ 
     
     [mySpeechSynthesizer speakText:strText];
 }
@@ -267,5 +270,56 @@
 - (IBAction)testReadText:(id)sender {
     
   }
+
+
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didStartSpeechUtterance:(AVSpeechUtterance *)utterance  {
+    
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        _labelOpt1.userInteractionEnabled = NO  ;
+        _labelOpt2.userInteractionEnabled = NO  ;
+        _btnNext.userInteractionEnabled = NO  ;
+        
+        _labelOpt2.alpha = 0.3 ;
+        _labelOpt1.alpha = 0.3 ;
+        _btnNext.alpha = 0.3 ;
+    }];
+}
+
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)utterance {
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        _labelOpt1.userInteractionEnabled = YES  ;
+        _labelOpt2.userInteractionEnabled = YES   ;
+        
+        _btnNext.userInteractionEnabled = YES  ;
+        
+        _labelOpt2.alpha = 1.0 ;
+        _labelOpt1.alpha = 1.0 ;
+        _btnNext.alpha = 1.0;
+    }];
+    
+    
+   
+}
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didPauseSpeechUtterance:(AVSpeechUtterance *)utterance {
+    
+}
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didContinueSpeechUtterance:(AVSpeechUtterance *)utterance {
+    
+}
+- (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didCancelSpeechUtterance:(AVSpeechUtterance *)utterance {
+    [UIView animateWithDuration:0.3 animations:^{
+        _labelOpt1.userInteractionEnabled = YES  ;
+        _labelOpt2.userInteractionEnabled = YES   ;
+        
+        _btnNext.userInteractionEnabled = YES  ;
+        
+        _labelOpt2.alpha = 1.0 ;
+        _labelOpt1.alpha = 1.0 ;
+        _btnNext.alpha = 1.0;
+    }];
+}
+
 
 @end

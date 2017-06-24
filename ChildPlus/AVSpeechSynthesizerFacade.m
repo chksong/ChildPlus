@@ -72,17 +72,17 @@
     
     
     // Split the utterances into separate array entries.
-    NSArray* speechArray = [aTextToSpeak componentsSeparatedByString:@"|"];
+  //  NSArray* speechArray = [aTextToSpeak componentsSeparatedByString:@"|"];
     
-    [self setMyExpectedUtterances:[speechArray count]];
+  //  [self setMyExpectedUtterances:[speechArray count]];
     
-    NSLog(@"There are %ld utterances to speak", myExpectedUtterances);
+ //   NSLog(@"There are %ld utterances to speak", myExpectedUtterances);
     
-    for (int i=0; i<[speechArray count]; i++)
-    {
-        NSString* speech = [speechArray objectAtIndex:i];
-        
-        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:speech];
+//    for (int i=0; i<[speechArray count]; i++)
+//    {
+//        NSString* speech = [speechArray objectAtIndex:i];
+    
+        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:aTextToSpeak];
         
         AVSpeechSynthesisVoice *voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-CN"];//设置语言
         utterance.voice = voice;
@@ -97,7 +97,7 @@
         [self setMyDeactivationAttempts:0];
         
         [mySynthesizer speakUtterance:utterance];
-    }
+    //}
     
 }
 
@@ -106,15 +106,15 @@
     
     NSLog(@"AVSpeechSynthesizerFacade::cancelAudioSession enter");
     
-    if ([mySynthesizer isSpeaking] == YES)
-    {
-        // Before shutting down a session we need to clear all queues, converters, players and recorders
-        // or the AVAudioSession will not terminate properly.
-        
-        NSLog(@"AVSpeechSynthesizerFacade::cancelAudioSession the speech engine is still busy.  Wait 1 second before trying to deactivate the session.");
-        [self performSelector:@selector(cancelAudioSession) withObject:nil afterDelay:1.0];
-        return;
-    }
+//    if ([mySynthesizer isSpeaking] == YES)
+//    {
+//        // Before shutting down a session we need to clear all queues, converters, players and recorders
+//        // or the AVAudioSession will not terminate properly.
+//        
+//        NSLog(@"AVSpeechSynthesizerFacade::cancelAudioSession the speech engine is still busy.  Wait 1 second before trying to deactivate the session.");
+//        [self performSelector:@selector(cancelAudioSession) withObject:nil afterDelay:0.5];
+//        return;
+//    }
     
     
     if ([self myDeactivationAttempts] < 3)
@@ -154,6 +154,10 @@
 {
     NSLog(@"AVSpeechSynthesizerFacade::didStartSpeechUtterance enter");
     
+    if ([self.playDelegate respondsToSelector:@selector(speechSynthesizer:didStartSpeechUtterance:)]) {
+        [self.playDelegate speechSynthesizer:synthesizer didStartSpeechUtterance:utterance];
+    }
+    
     // Nothing to do
 }
 
@@ -180,6 +184,11 @@
         NSLog(@"AVSpeechSynthesizerFacade::didFinishSpeechUtterance - not canceling audio session yet because there are %ld utterances pending", [self myExpectedUtterances]);
     }
     
+    //add by songck  2017- 6-24
+    
+    if ([self.playDelegate respondsToSelector:@selector(speechSynthesizer:didFinishSpeechUtterance:)]) {
+        [self.playDelegate speechSynthesizer:synthesizer didFinishSpeechUtterance:utterance];
+    }
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didCancelSpeechUtterance:(AVSpeechUtterance *)utterance
@@ -189,7 +198,14 @@
     [self setMyDeactivationAttempts:0];
     
     [self cancelAudioSession];
+    
+    // add by songck 2017-6-24
+    if ([self.playDelegate respondsToSelector:@selector(speechSynthesizer:didCancelSpeechUtterance:)]) {
+        [self.playDelegate speechSynthesizer:synthesizer didCancelSpeechUtterance:utterance];
+    }
 }
+
+
 
 #pragma mark -
 #pragma mark Memory Management
